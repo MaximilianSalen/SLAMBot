@@ -6,5 +6,6 @@ readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "cmake>=4.0.0",
+    "conan>=2.15.1",
     "ninja>=1.11.1.4",
 ]
