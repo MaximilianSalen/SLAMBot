@@ -30,3 +30,8 @@ Lastly, build the project with
 uv run cmake .. -G Ninja
 ninja
 ```
+
+## Utilities
+Before a proper CI is setup the following tools are only provided as utilities.
+### ClangFormat
+[ClangFormat](https://clang.llvm.org/docs/ClangFormat.html) is used as a formatter for the C++ files. The goal is to have the project be consistent across multiple files for better readability.
