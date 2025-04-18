@@ -25,14 +25,27 @@ download_dependencies(){
         mkdir -p "$THIRD_PARTY_DIR"
     fi
 
-    # Download Sophus if it's not already downloaded
+    # Download 3PPs if they are not already downloaded
     if [ ! -d "$THIRD_PARTY_DIR/sophus" ]; then
         echo "Cloning Sophus..."
         git clone "$SOPHUS_URL" "$THIRD_PARTY_DIR/sophus"
-        mkdir build && cd build &&
-        cmake .. && make -j2 && make install
     else
         echo "Sophus is already downloaded"
+    fi
+
+    if [ ! -d "$THIRD_PARTY_DIR/pangolin" ]; then
+        echo "Cloning pangolin..."
+        git clone --recursive "$PANGOLIN_URL" "$THIRD_PARTY_DIR/pangolin"
+        ./third_party/pangolin/scripts/install_prerequisites.sh --dry-run recommended
+    else
+        echo "pangolin is already downloaded"
+    fi
+
+    if [ ! -d "$THIRD_PARTY_DIR/g2o" ]; then
+        echo "Cloning g2o..."
+        git clone "$G2O_URL" "$THIRD_PARTY_DIR/g2o"
+    else
+        echo "g2o is already downloaded"
     fi
 }
 
@@ -55,7 +68,7 @@ build_project(){
 
     # Run CMake configuration
     echo "Configuring the project with CMake..."
-    cmake -G "$CMAKE_GENERATOR" -DCMAKE_BUILD_TYPE="$BUILD_TYPE"..
+    cmake -G "$CMAKE_GENERATOR" -DCMAKE_BUILD_TYPE="$BUILD_TYPE" ..
 
     # Build the project
     echo "Building the project with Ninja..."
@@ -91,12 +104,16 @@ run_executable() {
 case "$1" in
     clean)
         clean_build
+        download_dependencies
+        build_project
         ;;
     run)
         build_project
+        download_dependencies
         run_executable
         ;;
     build | "" )
+        download_dependencies
         build_project
         ;;
     *)
