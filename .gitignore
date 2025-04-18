@@ -33,3 +33,5 @@
 
 CMakeCache.txt
 CMakeFiles
+/third_party/*
+/build
