@@ -67,4 +67,8 @@ compile it yourself.
 ## Utilities
 Before a proper CI is setup the following tools are only provided as utilities.
 ### ClangFormat
-[ClangFormat](https://clang.llvm.org/docs/ClangFormat.html) is used as a formatter for the C++ files.
+[ClangFormat](https://clang.llvm.org/docs/ClangFormat.html) is used as a
+formatter for the C++ files. To format all `.h` and `.cpp` files run
+```sh
+find . -name "*.cpp" -o -name "*.h" | xargs uv run clang-format -i
+```
