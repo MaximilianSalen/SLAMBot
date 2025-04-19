@@ -27,8 +27,13 @@ uv run conan install .. --output-folder=./conan --build=missing
 ```
 Lastly, build the project with
 ```sh
-uv run cmake .. -G Ninja
-ninja
+uv run cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release
+uv run ninja
+```
+
+From the build directory, the compiled program can be executed with
+```sh
+./SLAMBot/SLAMBot
 ```
 
 ## Utilities
