@@ -49,6 +49,13 @@ From the build directory, the compiled program can be executed with
 ./SLAMBot/SLAMBot
 ```
 
+## Testing
+The project use [Catch2](https://github.com/catchorg/Catch2) for tests. Tests
+are added in their libraries respective CMake file. The tests can be run with
+the following command
+```sh
+uv run ctest
+```
 ## Utilities
 Before a proper CI is setup the following tools are only provided as utilities.
 ### ClangFormat
