@@ -1,0 +1,65 @@
+name: CI with Docker
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+env:
+  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
+  BUILD_TYPE: Release
+
+jobs:
+  docker-build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v4
+
+    - name: Build Docker image
+      run: |
+        docker buildx build -t slambot-dev-env .
+
+    - name: Run build and tests in Docker container
+      run: |
+        docker run -d --name ci_container \
+          -v ${{ github.workspace }}:/workspace \
+          -w /workspace \
+          my-project-ci \
+          tail -f /dev/null
+
+    - name: Sync uv
+      run: |
+        docker exec ci_container bash -c "uv sync"
+
+    - name: Install conan packages
+      run: |
+        docker exec ci_container bash -c "
+        mkdir build && \
+        cd build && \
+        uv run conan profile detect --force && \
+        uv run conan install .. --output-folder=./conan --build=missing"
+
+    - name: Configure
+      run: |
+        docker exec ci_container bash -c \
+        "cd build && uv run cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release"
+
+    - name: Build
+      run: |
+        docker exec ci_container bash -c \
+        "cd build && uv run ninja"
+
+    - name: Tests
+      run: |
+        docker exec ci_container bash -c \
+        "cd build && uv run ctest --output-on-failure"
+
+    - name: Stop and remove container
+      if: always()
+      run: docker rm -f ci_container
