@@ -6,6 +6,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 #############################
 # Find Eigen
 find_package(Eigen3 REQUIRED)
+find_package(Sophus REQUIRED)
 
 add_library(SLAMBot
     ExampleDivFunction.cpp)
@@ -13,8 +14,8 @@ add_library(SLAMBot
 # Add root directory.
 target_include_directories(SLAMBot PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/..)
 
-# Link Eigen.
-target_link_libraries(SLAMBot PRIVATE
+# Link Eigen and Sophus
+target_link_libraries(SLAMBot PRIVATE Sophus::Sophus
     Eigen3::Eigen)
 
 #############################
@@ -22,9 +23,15 @@ target_link_libraries(SLAMBot PRIVATE
 #############################
 add_executable(SLAMBotApp
     main.cpp)
+add_executable(test_sophus TestSophus.cpp)
 target_link_libraries(SLAMBotApp PRIVATE
     SLAMBot
     Eigen3::Eigen)
+
+target_link_libraries(test_sophus PRIVATE
+    SLAMBot
+    Eigen3::Eigen
+    Sophus::Sophus)
 
 #############################
 # SLAMBot tests 

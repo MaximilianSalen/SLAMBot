@@ -1,6 +1,7 @@
 [requires]
 eigen/3.4.0
 catch2/3.8.0
+sophus/1.22.10
 
 [generators]
 CMakeDeps
