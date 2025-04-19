@@ -5,7 +5,9 @@ A Visual SLAM system implemented in C++ using OpenCV and Eigen.
 ## Build Project
 The project is setup with [uv](https://github.com/astral-sh/uv) for managing
 project tools. The project is built with [CMake](https://cmake.org/) and
-[Ninja](https://ninja-build.org/) and the C++ packages are managed with [Conan](https://conan.io/). The developer environment is setup with [Docker](https://www.docker.com/).
+[Ninja](https://ninja-build.org/) and the C++ packages are managed with
+[Conan](https://conan.io/). The developer environment is setup with
+[Docker](https://www.docker.com/).
 
 The docker does not exist pre-built. To build it run
 ```sh
