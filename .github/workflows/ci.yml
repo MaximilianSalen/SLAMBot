@@ -30,7 +30,7 @@ jobs:
         docker run -d --name ci_container \
           -v ${{ github.workspace }}:/workspace \
           -w /workspace \
-          my-project-ci \
+          slambot-dev-env \
           tail -f /dev/null
 
     - name: Sync uv
