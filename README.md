@@ -56,6 +56,14 @@ the following command
 ```sh
 uv run ctest
 ```
+
+## Add C++ package
+To add a new C++ package with `conan` simply add the package to the
+[conanfile.txt](./conanfile.txt). Available packages and versions can be found
+here [https://conan.io/center/recipes](https://conan.io/center/recipes). If the
+package or version does not exist, it is possible to write your own recipe and
+compile it yourself.
+
 ## Utilities
 Before a proper CI is setup the following tools are only provided as utilities.
 ### ClangFormat
