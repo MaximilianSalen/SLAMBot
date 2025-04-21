@@ -36,16 +36,20 @@ uv run conan profile detect --force
 Create a build directory in the root and enter it with
 ```sh
 mkdir build
-cd build
 ```
-Install `conan` managed packages with
+The project is dependent on [Pangolin](https://github.com/stevenlovegrove/Pangolin/tree/master) and [g2o](https://github.com/RainerKuemmerle/g2o)(not added yet) which does not exist in the `conan` recipes. Custom, very basic recipes can be found under [conan/recipes](./conan/recipes). To build them, run
 ```sh
-uv run conan install .. --output-folder=./conan --build=missing
+uv run conan create conan/recipes/pangolin --profile=conan/profiles/linux
+uv run conan create conan/recipes/g2o --profile=conan/profiles/linux
+```
+Then to install both packages that exist in the remote, and that have been built locally, run
+```sh
+uv run conan install . --output-folder=./build/conan
 ```
 Lastly, build the project with
 ```sh
-uv run cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release
-uv run ninja
+uv run cmake -S . -B build/release -G Ninja -DCMAKE_BUILD_TYPE=Release
+uv run cmake --build build/release
 ```
 
 From the build directory, the compiled program can be executed with
