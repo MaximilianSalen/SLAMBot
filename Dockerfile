@@ -10,7 +10,7 @@ RUN apt-get update && apt-get install -y \
     g++12 \
     python3-pip \
     libegl-dev \
-    libegl11-mesa-dev \
+    libegl1-mesa-dev \
     libgtk2.0-dev \
     libva-dev \
     libvdpau-dev \
