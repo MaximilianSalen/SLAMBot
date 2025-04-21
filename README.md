@@ -16,7 +16,7 @@ docker buildx build -t slambot-dev-image .
 Start the container with
 ```sh
 docker run -td --name slambot-dev-container \
-    --mount type=bond,source=$pwd,target=/workspace \
+    --mount type=bind,source=$pwd,target=/workspace \
     slambot-dev-image
 ```
 And enter the workspace in a bash shell
