@@ -8,6 +8,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(Eigen3 REQUIRED)
 find_package(Sophus REQUIRED)
 find_package(OpenCV REQUIRED)
+find_package(pango REQUIRED)
+find_package(GLEW REQUIRED)
+find_package(OpenGL REQUIRED)
+find_package(TIFF REQUIRED)
 
 add_library(SLAMBot
     ExampleDivFunction.cpp)
@@ -16,7 +20,8 @@ add_library(SLAMBot
 target_include_directories(SLAMBot PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/..)
 
 # Link Eigen and Sophus
-target_link_libraries(SLAMBot PRIVATE Sophus::Sophus
+target_link_libraries(SLAMBot PRIVATE
+    Sophus::Sophus
     Eigen3::Eigen
     ${OpenCV_LIBS})
 
@@ -25,20 +30,27 @@ target_link_libraries(SLAMBot PRIVATE Sophus::Sophus
 #############################
 add_executable(SLAMBotApp
     main.cpp)
-add_executable(test_sophus TestSophus.cpp)
-add_executable(test_opencv TestOpenCV.cpp)
+# add_executable(test_sophus TestSophus.cpp)
+# add_executable(test_opencv TestOpenCV.cpp)
+add_executable(test_pangolin Pangolin_test.cpp)
 target_link_libraries(SLAMBotApp PRIVATE
     SLAMBot
     Eigen3::Eigen)
 
-target_link_libraries(test_sophus PRIVATE
-    SLAMBot
-    Eigen3::Eigen
-    Sophus::Sophus)
+target_link_libraries(test_pangolin PRIVATE
+    pango::pango
+    TIFF::TIFF
+    OpenGL::GL
+    GLEW::GLEW)
 
-target_link_libraries(test_opencv PRIVATE
-    SLAMBot
-    ${OpenCV_LIBS})
+# target_link_libraries(test_sophus PRIVATE
+#     SLAMBot
+#     Eigen3::Eigen
+#     Sophus::Sophus)
+#
+# target_link_libraries(test_opencv PRIVATE
+#     SLAMBot
+#     ${OpenCV_LIBS})
 
 #############################
 # SLAMBot tests 

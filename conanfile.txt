@@ -3,7 +3,10 @@ eigen/3.4.0
 catch2/3.8.0
 sophus/1.22.10
 opencv/3.4.20
-pangolin/0.9.3
+pango/0.9.3
+fmt/10.1.0
+opengl/system
+glew/2.2.0
 
 [generators]
 CMakeDeps

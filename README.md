@@ -44,7 +44,7 @@ uv run conan create conan/recipes/g2o --profile=conan/profiles/linux
 ```
 Then to install both packages that exist in the remote, and that have been built locally, run
 ```sh
-uv run conan install . --output-folder=./build/conan
+uv run conan install . --output-folder=./build/conan --profile=conan/profiles/linux
 ```
 Lastly, build the project with
 ```sh
