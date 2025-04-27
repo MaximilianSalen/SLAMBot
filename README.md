@@ -11,15 +11,17 @@ project tools. The project is built with [CMake](https://cmake.org/) and
 
 The docker does not exist pre-built. To build it run
 ```sh
-docker buildx build -t slambot-dev-env .
+docker buildx build -t slambot-dev-image .
 ```
-And to mount the project and enter with a bash shell
+Start the container with
 ```sh
-docker run --rm -it \
-    -v $PWD:/workspace \
-    -w /workspace \
-    slambot-dev-env \
-    bash
+docker run -td --name slambot-dev-container \
+    --mount type=bind,source=$pwd,target=/home/container-user \
+    slambot-dev-image
+```
+And enter the workspace in a bash shell
+```sh
+docker exec -w /home/container-user -it slambot-dev-container bash
 ```
 
 Once inside the container, run
@@ -49,6 +51,11 @@ uv run ninja
 From the build directory, the compiled program can be executed with
 ```sh
 ./SLAMBot/SLAMBot
+```
+
+When exiting the docker container, it can be stopped with
+```sh
+docker container stop slambot-dev-container
 ```
 
 ## Testing
