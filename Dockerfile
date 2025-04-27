@@ -7,6 +7,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 # Install basic dependencies and Python's pip to install CMake
 RUN apt-get update && apt-get install -y \
     build-essential \
+    sudo \
     g++12 \
     python3-pip \
     libva-dev \
@@ -49,16 +50,25 @@ RUN apt-get update && apt-get install -y \
     libxcb-xfixes0-dev \
     libxcb-xinerama0-dev \
     libxcb-dri3-dev \
-    uuid-dev \
     libxcb-cursor-dev \
     libxcb-dri2-0-dev \
+    libxcb-dri3-dev \
     libxcb-present-dev \
     libxcb-composite0-dev \
     libxcb-ewmh-dev \
     libxcb-res0-dev \
     libxcb-util-dev \
-    libxcb-util0-dev \
-    pkg-config
-
+    libxcb-util0-dev
 
 RUN pip3 install uv
+
+RUN useradd -m -s /bin/bash container-user
+
+# Add the user to sudoers and allow passwordless sudo
+RUN usermod -aG sudo container-user \
+ && echo 'container-user ALL=(ALL) NOPASSWD:ALL' > /etc/sudoers.d/container-user \
+ && chmod 0440 /etc/sudoers.d/container-user
+
+# Switch to the new user
+USER container-user
+WORKDIR /home/container-user
