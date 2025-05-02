@@ -1,6 +1,6 @@
+#include <iostream>
 #include "Eigen/Dense"
 
-#include <iostream>
 
 void createAndPrintMatrix() {
     // Create a 3x3 matrix of doubles

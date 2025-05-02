@@ -9,6 +9,9 @@ find_package(Eigen3 REQUIRED)
 find_package(Sophus REQUIRED)
 find_package(OpenCV REQUIRED)
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+
 add_library(SLAMBot
     ExampleDivFunction.cpp)
 
