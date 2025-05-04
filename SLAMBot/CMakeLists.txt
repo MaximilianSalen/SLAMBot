@@ -60,7 +60,10 @@ add_executable(SLAMBot_test ExampleDivFunction_test.cpp)
 find_package(Catch2 REQUIRED)
 
 # Add root directory to tests.
-target_include_directories(SLAMBot_test PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/..)
+target_include_directories(SLAMBot_test
+    PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/..
+)
 
 # Link test.
 target_link_libraries(SLAMBot_test PRIVATE
