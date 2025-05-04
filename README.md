@@ -34,11 +34,7 @@ will setup the `conan` profile.
 ```sh
 uv run conan profile detect --force
 ```
-Create a build directory in the root.
-```sh
-mkdir build
-```
-Install `conan` packages.
+Create directory `build` and install `conan` packages in `build/conan`.
 ```sh
 uv run conan install . --output-folder=./build/conan --profile=conan/profiles/linux
 ```
