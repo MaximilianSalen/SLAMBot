@@ -82,4 +82,3 @@ RUN usermod -aG sudo container-user \
 
 # Switch to the new user
 USER container-user
-WORKDIR /home/container-user
