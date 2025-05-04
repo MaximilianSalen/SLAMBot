@@ -1,4 +1,5 @@
-# SLAMBot
+SLAMBot
+-------
 
 A Visual SLAM system implemented in C++ using OpenCV and Eigen.
 
@@ -33,19 +34,18 @@ will setup the `conan` profile.
 ```sh
 uv run conan profile detect --force
 ```
-Create a build directory in the root and enter it with
+Create a build directory in the root.
 ```sh
 mkdir build
-cd build
 ```
-Install `conan` managed packages with
+Install `conan` packages.
 ```sh
-uv run conan install .. --output-folder=./conan --build=missing
+uv run conan install . --output-folder=./build/conan --profile=conan/profiles/linux
 ```
 Lastly, build the project with
 ```sh
-uv run cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release
-uv run ninja
+uv run cmake -S . -B build/release -G Ninja -DCMAKE_BUILD_TYPE=Release
+uv run cmake --build build/release
 ```
 
 From the build directory, the compiled program can be executed with
@@ -63,7 +63,7 @@ The project use [Catch2](https://github.com/catchorg/Catch2) for tests. Tests
 are added in their libraries respective CMake file. The tests can be run with
 the following command
 ```sh
-uv run ctest
+uv run ctest --test-dir build/release/SLAMBot
 ```
 
 ## Add C++ package
