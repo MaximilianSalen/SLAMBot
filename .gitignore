@@ -37,3 +37,4 @@ CMakeFiles
 /build
 .devcontainer
 .vscode
+compile_commands.json

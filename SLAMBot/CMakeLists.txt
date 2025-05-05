@@ -7,41 +7,48 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 # Find packages
 find_package(Eigen3 REQUIRED)
 find_package(Sophus REQUIRED)
+find_package(xkbcommon REQUIRED)
 find_package(OpenCV REQUIRED)
 
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-
-
 add_library(SLAMBot
-    ExampleDivFunction.cpp)
+    ExampleDivFunction.cpp
+)
 
 # Add root directory.
-target_include_directories(SLAMBot PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/..)
+target_include_directories(SLAMBot
+    PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/..
+)
 
-# Link Eigen and Sophus
-target_link_libraries(SLAMBot PRIVATE Sophus::Sophus
-    Eigen3::Eigen
-    ${OpenCV_LIBS})
+target_link_libraries(SLAMBot
+    PRIVATE
+)
 
 #############################
 # SLAMBot executable 
 #############################
 add_executable(SLAMBotApp
     main.cpp)
-add_executable(test_sophus TestSophus.cpp)
-add_executable(test_opencv TestOpenCV.cpp)
 target_link_libraries(SLAMBotApp PRIVATE
     SLAMBot
-    Eigen3::Eigen)
+)
 
+# Temporary executables for testing packages. Should be removed when they are
+# properly used in the application.
+add_executable(test_sophus TestSophus.cpp)
+add_executable(test_opencv TestOpenCV.cpp)
+add_executable(test_pangolin TestPangolin.cpp)
 target_link_libraries(test_sophus PRIVATE
-    SLAMBot
-    Eigen3::Eigen
-    Sophus::Sophus)
+    Sophus::Sophus
+)
 
 target_link_libraries(test_opencv PRIVATE
-    SLAMBot
-    ${OpenCV_LIBS})
+    ${OpenCV_LIBS}
+)
+
+target_link_libraries(test_pangolin PRIVATE
+    pango_display
+)
 
 #############################
 # SLAMBot tests 
@@ -53,7 +60,10 @@ add_executable(SLAMBot_test ExampleDivFunction_test.cpp)
 find_package(Catch2 REQUIRED)
 
 # Add root directory to tests.
-target_include_directories(SLAMBot_test PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/..)
+target_include_directories(SLAMBot_test
+    PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/..
+)
 
 # Link test.
 target_link_libraries(SLAMBot_test PRIVATE

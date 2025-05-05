@@ -1,4 +1,5 @@
-# SLAMBot
+SLAMBot
+-------
 
 A Visual SLAM system implemented in C++ using OpenCV and Eigen.
 
@@ -11,15 +12,17 @@ project tools. The project is built with [CMake](https://cmake.org/) and
 
 The docker does not exist pre-built. To build it run
 ```sh
-docker buildx build -t slambot-dev-env .
+docker buildx build -t slambot-dev-image .
 ```
-And to mount the project and enter with a bash shell
+Start the container with
 ```sh
-docker run --rm -it \
-    -v $PWD:/workspace \
-    -w /workspace \
-    slambot-dev-env \
-    bash
+docker run -td --name slambot-dev-container \
+    --mount type=bind,source=$pwd,target=$pwd \
+    slambot-dev-image
+```
+And enter the workspace in a bash shell
+```sh
+docker exec -w $pwd -it slambot-dev-container bash
 ```
 
 Once inside the container, run
@@ -31,19 +34,14 @@ will setup the `conan` profile.
 ```sh
 uv run conan profile detect --force
 ```
-Create a build directory in the root and enter it with
+Create directory `build` and install `conan` packages in `build/conan`.
 ```sh
-mkdir build
-cd build
-```
-Install `conan` managed packages with
-```sh
-uv run conan install .. --output-folder=./conan --build=missing
+uv run conan install . --output-folder=./build/conan --profile=conan/profiles/linux
 ```
 Lastly, build the project with
 ```sh
-uv run cmake .. -G Ninja -DCMAKE_BUILD_TYPE=Release
-uv run ninja
+uv run cmake -S . -B build/release -G Ninja -DCMAKE_BUILD_TYPE=Release
+uv run cmake --build build/release
 ```
 
 From the build directory, the compiled program can be executed with
@@ -51,12 +49,17 @@ From the build directory, the compiled program can be executed with
 ./SLAMBot/SLAMBot
 ```
 
+When exiting the docker container, it can be stopped with
+```sh
+docker container stop slambot-dev-container
+```
+
 ## Testing
 The project use [Catch2](https://github.com/catchorg/Catch2) for tests. Tests
 are added in their libraries respective CMake file. The tests can be run with
 the following command
 ```sh
-uv run ctest
+uv run ctest --test-dir build/release/SLAMBot
 ```
 
 ## Add C++ package

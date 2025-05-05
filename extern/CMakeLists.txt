@@ -1,0 +1,6 @@
+set(BUILD_PANGOLIN_PYTHON OFF)
+set(BUILD_EXAMPLES OFF)
+set(BUILD_SHARED_LIBS OFF)
+set(PANGOLIN_INSTALL OFF)
+
+add_subdirectory(Pangolin)
