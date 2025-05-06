@@ -3,6 +3,9 @@ SLAMBot
 
 A Visual SLAM system implemented in C++ using OpenCV and Eigen.
 
+## Clone Project
+git clone --recurse-submodules git@github.com:MaximilianSalen/SLAMBot.git
+
 ## Build Project
 The project is setup with [uv](https://github.com/astral-sh/uv) for managing
 project tools. The project is built with [CMake](https://cmake.org/) and
