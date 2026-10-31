@@ -87,6 +87,23 @@ uv run cmake --build --preset asan
 uv run ctest --preset asan
 ```
 
+## Datasets
+[scripts/datasets.py](./scripts/datasets.py) downloads EuRoC sequences into
+`data/` (or `$SLAMBOT_DATA`). List them, then download the ones you need
+```sh
+uv run scripts/datasets.py list
+uv run scripts/datasets.py download MH_01_easy V1_01_easy
+```
+EuRoC may only be used non-commercially, so `data/` is never committed. Note
+that `git clean -x` deletes it.
+
+Plot a ground-truth trajectory with [evo](https://github.com/MichaelGrupp/evo).
+`--plot` opens a window, which needs Tk (on Arch: `sudo pacman -S tk`). In the
+container, use `--save_plot <file>.png` instead.
+```sh
+uv run evo_traj euroc data/euroc/MH_01_easy/mav0/state_groundtruth_estimate0/data.csv --plot
+```
+
 ## Experiments
 Book exercises and package demos live in [experiments](./experiments). They are
 built by default, but are not part of the library and are not run as tests.
@@ -117,7 +134,7 @@ git ls-files -- '*.cpp' '*.hpp' '*.h' | xargs uv run clang-format -i
 
 ### ClangTidy
 [ClangTidy](https://clang.llvm.org/extra/clang-tidy/) checks the naming style
-([ROADMAP D5](./docs/ROADMAP.md#d5-naming-and-style)) and common bugs in
+([ROADMAP D5](./docs/ROADMAP.md#d5-naming)) and common bugs in
 `slambot/`, and the CI checks it. After a build, run
 ```sh
 git ls-files -- 'slambot/*.cpp' | xargs uv run clang-tidy -p build/Release
