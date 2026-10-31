@@ -1,3 +1,0 @@
-[submodule "extern/Pangolin"]
-	path = extern/Pangolin
-	url = https://github.com/stevenlovegrove/Pangolin.git

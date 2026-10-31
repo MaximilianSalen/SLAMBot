@@ -1,0 +1,47 @@
+---
+# Naming follows docs/ROADMAP.md D5. Run it with
+#   git ls-files 'slambot/*.cpp' | xargs uv run clang-tidy -p build/Release
+Checks: >
+  -*,
+  bugprone-*,
+  -bugprone-easily-swappable-parameters,
+  clang-analyzer-*,
+  modernize-*,
+  -modernize-use-nodiscard,
+  -modernize-use-trailing-return-type,
+  performance-*,
+  readability-identifier-naming
+HeaderFilterRegex: '.*/slambot/.*'
+CheckOptions:
+  readability-identifier-naming.NamespaceCase: lower_case
+  readability-identifier-naming.ClassCase: CamelCase
+  readability-identifier-naming.StructCase: CamelCase
+  readability-identifier-naming.EnumCase: CamelCase
+  readability-identifier-naming.UnionCase: CamelCase
+  readability-identifier-naming.TypeAliasCase: CamelCase
+  readability-identifier-naming.TypedefCase: CamelCase
+  readability-identifier-naming.TemplateParameterCase: CamelCase
+  readability-identifier-naming.ConceptCase: CamelCase
+  readability-identifier-naming.FunctionCase: lower_case
+  readability-identifier-naming.MethodCase: lower_case
+  readability-identifier-naming.VariableCase: lower_case
+  readability-identifier-naming.ParameterCase: lower_case
+  readability-identifier-naming.MemberCase: lower_case
+  readability-identifier-naming.PrivateMemberSuffix: '_'
+  readability-identifier-naming.ProtectedMemberSuffix: '_'
+  readability-identifier-naming.ConstexprVariableCase: CamelCase
+  readability-identifier-naming.ConstexprVariablePrefix: k
+  readability-identifier-naming.GlobalConstantCase: CamelCase
+  readability-identifier-naming.GlobalConstantPrefix: k
+  readability-identifier-naming.StaticConstantCase: CamelCase
+  readability-identifier-naming.StaticConstantPrefix: k
+  readability-identifier-naming.EnumConstantCase: CamelCase
+  readability-identifier-naming.EnumConstantPrefix: k
+  readability-identifier-naming.MacroDefinitionCase: UPPER_CASE
+  # Poses keep the T_a_b form from ROADMAP §4.4, e.g. T_w_c and T_w_c_.
+  readability-identifier-naming.VariableIgnoredRegexp: '^T_[a-z0-9]+_[a-z0-9]+$'
+  readability-identifier-naming.ParameterIgnoredRegexp: '^T_[a-z0-9]+_[a-z0-9]+$'
+  readability-identifier-naming.MemberIgnoredRegexp: '^T_[a-z0-9]+_[a-z0-9]+_?$'
+  readability-identifier-naming.PrivateMemberIgnoredRegexp: '^T_[a-z0-9]+_[a-z0-9]+_$'
+  readability-identifier-naming.ProtectedMemberIgnoredRegexp: '^T_[a-z0-9]+_[a-z0-9]+_$'
+...
