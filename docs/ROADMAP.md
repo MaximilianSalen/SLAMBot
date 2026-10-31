@@ -4,8 +4,8 @@ The plan for learning visual SLAM while building a robot that localizes
 robustly. This file holds the plan and the decisions; GitHub issues track the
 work. Last updated 2026-10-31.
 
-The project follows Gao & Zhang, *Introduction to Visual SLAM* (2nd ed., also
-known as *14 Lectures on Visual SLAM*): [text](https://github.com/gaoxiang12/slambook-en),
+The project follows the English version of Gao, Zhang et al., *14 Lectures on
+Visual SLAM*: [text](https://github.com/gaoxiang12/slambook-en),
 [code](https://github.com/gaoxiang12/slambook2). Chapter numbers below match the
 book's code folders `ch2` to `ch13`.
 
@@ -19,13 +19,13 @@ Two stages (issue #5): first run on datasets, then on our own robot.
   improve a measured number: accuracy (ATE/RPE), robustness or speed.
 - The book's code is a reference, not a template. Its chapter 13 system targets
   KITTI (rectified stereo, no IMU) and has design problems we fix (see
-  [Architecture](#changes-from-the-books-chapter-13)).
+  [Changes from the book's chapter 13](#changes-from-the-books-chapter-13)).
 - Robustness matters as much as accuracy: we measure how often tracking is lost
   and how fast it recovers.
 - Geometry and optimization code is tested on synthetic data with known answers,
   and every Jacobian is checked against a numerical one.
-- We write the core algorithms ourselves. Claude writes infrastructure, tests
-  and stubs, and reviews. Tasks below are marked *(us)*, *(pair)* or *(Claude)*.
+- Each task below is marked *(us)* (we write it), *(pair)* (we design it with
+  Claude) or *(Claude)*. Claude's rules are in `CLAUDE.md`.
 
 ## Decisions
 
@@ -54,14 +54,14 @@ Rerun: the program logs timestamped data from any thread, and a separate viewer
 shows it live or from a `.rrd` recording. It works the same in Docker, CI and on
 the robot, and recordings can be replayed. The library only talks to a
 `viz::Visualizer` interface (with a null version for tests), so another viewer
-can be added later. One Rerun version is pinned for both the C++ SDK and the
-viewer (`rerun-sdk` in `pyproject.toml`). Pangolin, the book's viewer, was
-removed.
+can be added later. When Rerun is added (Phase 2), one version will be pinned
+for both the C++ SDK and the viewer. Pangolin, the book's viewer, was removed.
 
 ### D3 C++ standard
-C++20. gcc 11 stays the minimum because Jetson boards (JetPack 6, Ubuntu 22.04)
-ship it, so we use `fmt` instead of `std::format`. The dev image moves to
-Ubuntu 24.04 (gcc 13), and CI keeps a gcc 11 build.
+C++20. gcc 11 stays the minimum because Jetson boards run JetPack 6, which is
+based on Ubuntu 22.04, whose default compiler is gcc 11. So we use `fmt`
+instead of `std::format`. The dev image will move to
+Ubuntu 24.04 (gcc 13), with a separate CI job that builds with gcc 11.
 
 ### D5 Naming
 - Namespace `slambot::<module>`. Files `snake_case.hpp` / `.cpp`, with tests
@@ -96,7 +96,8 @@ Not planned: 3D lidar, radar, event cameras.
 
 ### Modules
 Each module is one CMake library, `slambot::<name>`, added when a phase needs
-it. A module only depends on modules above it in this table.
+it. The pipeline modules (`frontend`, `backend`, `loop_closure`, `system`) use
+the others, never the other way around. Only `system` uses `viz`.
 
 | Module | Contents | Phase |
 |---|---|---|
@@ -118,8 +119,8 @@ it. A module only depends on modules above it in this table.
 Data flow: `io` delivers timestamped stereo frames, IMU samples and wheel
 odometry. The frontend tracks each frame and passes keyframes to the backend,
 which optimizes a sliding window. Loop closure corrects drift across the whole
-map. All three share `map`. `viz` and `eval` only observe; the pipeline doesn't
-depend on them. Programs in `apps/` parse options and run `system`.
+map. All three share `map`, and none of them uses `viz` or `eval`. Programs in
+`apps/` parse options and run `system`.
 
 Repository layout:
 ```
@@ -163,19 +164,19 @@ docs/               this roadmap, later learning notes
 
 ## Phases
 
-| Phase | Book | Build | Done when |
-|---|---|---|---|
-| 0 Foundations | – | Build, CI, datasets, evaluation tools | A fresh clone builds and tests with one command, in Docker and CI |
-| 1 Geometry and evaluation | ch2–4 | `core`, `geometry` (Lie groups), `eval`, trajectory files | Our ATE/RPE equals evo's on EuRoC ground truth |
-| 2 Cameras and EuRoC | ch5 | `camera`, EuRoC reader, `viz` | Rectified EuRoC stereo plays in the viewer, epipolar error < 1 px |
-| 3 Optimization | ch6, appendices A–B | `optimization`, Jacobian checker | Our GN/LM matches Ceres on test problems |
-| 4 Features and two-view geometry | ch7 | `features`, two-view geometry, PnP, ICP, synthetic scenes | A simple frame-to-frame VO runs on MH_01 and is evaluated |
-| 5 First stereo VO | ch8, ch13 frontend | `map`, `frontend`, `system`, `slambot_run` | All 11 EuRoC sequences run, and CI guards the ATE baseline |
-| 6 Backend | ch9, ch10 (sliding window), ch13 backend | Sliding-window BA, threaded mode | ATE beats Phase 5 on every sequence; TSan clean |
-| 7 Loop closure | ch10 (pose graph), ch11 | `loop_closure` | Loops found on MH_01–05 with no false positives; ATE improves |
-| 8 Fusion and robustness | Papers (ch14 has pointers) | IMU, wheel odometry, failure handling | See below |
-| 9 Own robot | ch5 (calibration) | Drivers, calibration, arm64 | Live run on the robot at the target frame rate, checked against a lidar reference |
-| Optional: dense mapping | ch12 | Stereo depth to an octomap or TSDF | When the robot needs a map to navigate |
+| Phase | Book | Build |
+|---|---|---|
+| 0 Foundations | – | Build, CI, datasets, evaluation tools |
+| 1 Geometry and evaluation | ch2–4 | `core`, `geometry` (Lie groups), `eval`, trajectory files |
+| 2 Cameras and EuRoC | ch5 | `camera`, EuRoC reader, `viz` |
+| 3 Optimization | ch6, appendices A–B | `optimization`, Jacobian checker |
+| 4 Features and two-view geometry | ch7 | `features`, two-view geometry, PnP, ICP, synthetic scenes |
+| 5 First stereo VO | ch8, ch13 frontend | `map`, `frontend`, `system`, `slambot_run` |
+| 6 Backend | ch9, ch10 (sliding window), ch13 backend | Sliding-window BA, threaded mode |
+| 7 Loop closure | ch10 (pose graph), ch11 | `loop_closure` |
+| 8 Fusion and robustness | Papers (ch14 has pointers) | IMU, wheel odometry, failure handling |
+| 9 Own robot | ch5 (calibration) | Drivers, calibration, arm64 |
+| Optional: dense mapping | ch12 | Stereo depth to an octomap or TSDF, when the robot needs a map to navigate |
 
 Chapters 2–6 are needed for everything else. The book's full system (ch13)
 comes right after the frontend chapters, so each backend chapter improves a
@@ -183,13 +184,17 @@ system that already runs.
 
 ### Phase 0: Foundations
 Done: build fixes, module layout, C++20, clang-tidy naming check, warnings,
-ASan/TSan presets, CI (format, build, tests, clang-tidy, ASan),
-`scripts/datasets.py`, evo.
+ASan/TSan presets, CI,
+`scripts/datasets.py`, evo, `CLAUDE.md` and the doc audit.
+
+Done when: a fresh clone builds and tests with one command, in Docker and CI.
 
 To do:
-- Ubuntu 24.04 dev image published to GHCR, and a gcc 11 CI job (D3).
-- `CLAUDE.md`: build and test commands, conventions, who writes what.
+- Carry out D3 (new dev image, gcc 11 CI job), and publish the image to GHCR.
 - pre-commit hooks, a PR template, branch protection on `main`.
+- GitHub cleanup: close issue #3 (dataset); delete branch
+  `2-Add-CI`; archive `experimental/pangolin-conan-recipe`; reuse the `Frame`
+  and `Dataset` ideas from `frontend/dataset-frames` in Phases 2 and 5.
 
 ### Phase 1: Geometry and evaluation (ch2–4)
 - Read: ch2–4, with Solà et al., *A micro Lie theory*.
@@ -345,13 +350,9 @@ The book only points to papers here. Three steps, each measured on its own.
 | KITTI odometry | Car. Rectified stereo. | Optional, to compare with the book's ch13 |
 | Own recordings | Our robot, ASL format, lidar reference. | Phase 9 |
 
-- `scripts/datasets.py` downloads EuRoC sequences to `data/` (or
-  `$SLAMBOT_DATA`). EuRoC comes as one zip per environment (12.7 GB for the
-  machine hall), so the script downloads just the requested sequence and checks
-  its size and CRC-32.
-- Never commit datasets. EuRoC's license is "In Copyright, Non-Commercial Use
-  Permitted"; KITTI's is CC BY-NC-SA 3.0. Prefer synthetic test data, and keep
-  committed test data under 5 MB.
+- EuRoC's license is "In Copyright, Non-Commercial Use Permitted"; KITTI's is
+  CC BY-NC-SA 3.0. Prefer synthetic test data, and keep committed test data
+  under 5 MB.
 - evo evaluates trajectories, and cross-checks our `eval` module.
 
 ## Testing
@@ -375,15 +376,12 @@ so a changed number means a real change.
 ## CI and tools
 
 CI today (`.github/workflows/ci.yml`, on every PR and push to `main`): a
-clang-format check, then in the dev image a build with warnings as errors, unit
-tests, clang-tidy, and the tests again under ASan + UBSan.
+clang-format check, a docs check, then in the dev image a build with warnings
+as errors, unit tests, clang-tidy, and the tests again under ASan + UBSan.
 
-Planned:
-- Ubuntu 24.04 dev image published to GHCR; a gcc 11 build job.
-- pre-commit hooks, PR template, branch protection on `main`.
-- Nightly regression job: runs EuRoC sequences, shows the ATE table in the job
-  summary, and keeps trajectories and Rerun recordings as artifacts.
-- arm64 build (Phase 9).
+Planned, besides the Phase 0 to-do list: a nightly regression job that runs
+EuRoC sequences, shows the ATE table in the job summary, and keeps trajectories
+and Rerun recordings as artifacts.
 
 Tools:
 - Docker + devcontainer: the same environment for both of us and CI.
@@ -394,15 +392,6 @@ Tools:
 
 ## Working with Claude Code
 
-Who writes what:
-- Us: the core algorithms. Lie group functions, camera models, GN/LM,
-  two-view geometry, triangulation, PnP, ICP, optical flow, residuals, Schur
-  complement and marginalization, keyframe choice, vocabulary tree, IMU
-  preintegration.
-- Claude: build, CI, Docker, dataset readers, viewer code, scripts, test
-  scaffolding, the synthetic scene generator, reviews.
-- Together: module interfaces, connecting frontend and backend, threading.
-
 For each *(us)* task:
 1. Read the book section.
 2. Have Claude explain it and quiz us. Write notes in `docs/learning/chNN.md`.
@@ -411,19 +400,12 @@ For each *(us)* task:
 5. Review with `/code-review`, and compare with the library version.
 6. Open a PR for the other person to review, with a short "what I learned".
 
-`CLAUDE.md` holds the build commands, the conventions, and the rule that Claude
-doesn't write *(us)* code unless asked. Use the "Learning" output style for
-learning sessions.
+Use the "Learning" output style for learning sessions.
 
 ## GitHub
 
-- Milestones are the phases; issues are the tasks in each phase. Labels:
-  `phase-N`, `learning`, `infra`, `decision`, `bug`, `experiment`.
-- Issue #5 (project plan) points here. #3 (dataset) can close: EuRoC. #2 (CI)
-  can close: CI is in place.
-- Old branches: delete `2-Add-CI` (replaced); archive
-  `experimental/pangolin-conan-recipe` (Pangolin removed); move the `Frame` and
-  `Dataset` ideas from `frontend/dataset-frames` into Phases 2 and 5.
+Milestones are the phases; issues are the tasks in each phase. Labels:
+`phase-N`, `learning`, `infra`, `decision`, `bug`, `experiment`.
 
 ## References
 

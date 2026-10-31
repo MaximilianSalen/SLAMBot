@@ -47,3 +47,7 @@ CMakeUserPresets.json
 
 # Datasets (scripts/datasets.py), not ours to share
 /data
+
+# Claude Code: personal settings and the doc-audit hook state
+.claude/settings.local.json
+.claude/doc-audit-state.json

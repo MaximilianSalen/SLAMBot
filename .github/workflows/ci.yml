@@ -25,6 +25,14 @@ jobs:
           git ls-files -z -- '*.cpp' '*.hpp' '*.h' \
             | xargs -0 -r uv run clang-format --dry-run --Werror
 
+  docs:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Check docs (line budgets, links, emoji)
+        run: python3 scripts/check_docs.py
+
   build-test:
     runs-on: ubuntu-24.04
     env:
