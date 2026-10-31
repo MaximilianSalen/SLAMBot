@@ -9,5 +9,6 @@ dependencies = [
     "clang-tidy>=20.1.0",
     "cmake>=4.0.0",
     "conan>=2.18.0",
+    "evo>=1.31",
     "ninja>=1.11.1.4",
 ]

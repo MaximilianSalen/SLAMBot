@@ -44,3 +44,6 @@ CMakeUserPresets.json
 
 # uv
 .venv/
+
+# Datasets (scripts/datasets.py), not ours to share
+/data

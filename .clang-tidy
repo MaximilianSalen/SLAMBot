@@ -38,7 +38,7 @@ CheckOptions:
   readability-identifier-naming.EnumConstantCase: CamelCase
   readability-identifier-naming.EnumConstantPrefix: k
   readability-identifier-naming.MacroDefinitionCase: UPPER_CASE
-  # Poses keep the T_a_b form from ROADMAP §4.4, e.g. T_w_c and T_w_c_.
+  # Poses keep the T_a_b form (ROADMAP conventions), e.g. T_w_c and T_w_c_.
   readability-identifier-naming.VariableIgnoredRegexp: '^T_[a-z0-9]+_[a-z0-9]+$'
   readability-identifier-naming.ParameterIgnoredRegexp: '^T_[a-z0-9]+_[a-z0-9]+$'
   readability-identifier-naming.MemberIgnoredRegexp: '^T_[a-z0-9]+_[a-z0-9]+_?$'
