@@ -22,7 +22,7 @@ jobs:
 
       - name: Check formatting with clang-format
         run: |
-          git ls-files -z -- '*.cpp' '*.h' ':!extern/' ':!build/' \
+          git ls-files -z -- '*.cpp' '*.hpp' '*.h' \
             | xargs -0 -r uv run clang-format --dry-run --Werror
 
   build-test:
@@ -31,8 +31,6 @@ jobs:
       IMAGE: slambot-dev-image:ci
     steps:
       - uses: actions/checkout@v7
-        with:
-          submodules: recursive
 
       - uses: docker/setup-buildx-action@v4
 
@@ -61,6 +59,9 @@ jobs:
         with:
           path: build/.conan2
           key: conan-${{ runner.os }}-${{ hashFiles('conanfile.txt', 'conan/profiles/linux', 'conan.lock') }}
+          # After a change, start from the newest cache: Conan reuses the
+          # binaries that still fit and builds only what is missing.
+          restore-keys: conan-${{ runner.os }}-
 
       - name: Install Conan packages
         run: |
@@ -84,7 +85,21 @@ jobs:
       - name: Configure, build and test
         run: |
           $RUN_IN_IMAGE bash -euo pipefail -c '
-            uv run cmake --preset conan-release
+            uv run cmake --preset conan-release -DSLAMBOT_WARNINGS_AS_ERRORS=ON
             uv run cmake --build --preset conan-release
             uv run ctest --preset conan-release --output-on-failure
+          '
+
+      # The image has no git, so list the files here and pass them in.
+      - name: Check naming and common bugs with clang-tidy
+        run: |
+          $RUN_IN_IMAGE uv run clang-tidy -p build/Release --quiet \
+            --warnings-as-errors='*' $(git ls-files -- 'slambot/*.cpp')
+
+      - name: Test with AddressSanitizer and UBSan
+        run: |
+          $RUN_IN_IMAGE bash -euo pipefail -c '
+            uv run cmake --preset asan -DSLAMBOT_WARNINGS_AS_ERRORS=ON
+            uv run cmake --build --preset asan
+            uv run ctest --preset asan
           '
