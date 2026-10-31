@@ -1,0 +1,12 @@
+{
+    "name": "SLAMBot",
+    "build": {
+        "dockerfile": "../Dockerfile",
+        "context": ".."
+    },
+    "remoteUser": "container-user",
+    // Mount the workspace at the same absolute path as on the host, like the
+    // README's docker commands, so paths in compile_commands.json match.
+    "workspaceMount": "source=${localWorkspaceFolder},target=${localWorkspaceFolder},type=bind",
+    "workspaceFolder": "${localWorkspaceFolder}"
+}

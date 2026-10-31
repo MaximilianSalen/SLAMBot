@@ -3,7 +3,7 @@
 
 void testSophus() {
     // Test demonstration of group multiplication of rotation matrices
-    
+
     // Create rotation matrices from rotations around the x, y and z axes:
     const double kPi = Sophus::Constants<double>::pi();
     Sophus::SO3d R1 = Sophus::SO3d::rotX(kPi / 4);
@@ -24,21 +24,19 @@ void testSophus() {
     std::cout << "Rotation Matrices can act on vectors" << std::endl;
     std::cout << "x\n" << x.transpose() << std::endl;
     std::cout << "R2*x\n" << R2 * x << std::endl;
-    std::cout << "R1*(R2*x)\n" << (R1*(R2 * x)).transpose() << std::endl;
-    std::cout << "(R1*R2)*x\n" << ((R1*R2) * x).transpose() << std::endl;
+    std::cout << "R1*(R2*x)\n" << (R1 * (R2 * x)).transpose() << std::endl;
+    std::cout << "(R1*R2)*x\n" << ((R1 * R2) * x).transpose() << std::endl;
     std::cout << std::endl;
 
     // SO(3) are internally represented as unit quarternions.
     std::cout << "R1 in matrix form:\n" << R1.matrix() << std::endl;
     std::cout << "R1 in unit quaternion form:\n"
-            << R1.unit_quaternion().coeffs().transpose() << std::endl;
+              << R1.unit_quaternion().coeffs().transpose() << std::endl;
 
     std::cout << std::endl;
-
 }
 
 int main() {
     testSophus();
     return 0;
 }
-
