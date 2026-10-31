@@ -1,7 +1,7 @@
 SLAMBot
 -------
 
-A Visual SLAM system implemented in C++ using OpenCV and Eigen.
+A visual SLAM system in C++, built to learn SLAM.
 
 The plan, decisions and conventions are in [docs/ROADMAP.md](./docs/ROADMAP.md).
 
@@ -12,7 +12,7 @@ git clone git@github.com:MaximilianSalen/SLAMBot.git
 
 ## Layout
 - [slambot](./slambot): the library, one CMake target per module
-  (`slambot::core`, ...). Unit tests sit next to the code as `<file>_test.cpp`.
+  (`slambot::core`, ...). Unit tests sit next to the code.
 - [experiments](./experiments): book exercises and package demos.
 - [cmake](./cmake): `slambot_add_module()`, warnings and sanitizers.
 
@@ -94,8 +94,8 @@ uv run ctest --preset asan
 uv run scripts/datasets.py list
 uv run scripts/datasets.py download MH_01_easy V1_01_easy
 ```
-EuRoC may only be used non-commercially, so `data/` is never committed. Note
-that `git clean -x` deletes it.
+`data/` is gitignored, so `git clean -x` deletes it. The dataset licenses are
+in the roadmap.
 
 Plot a ground-truth trajectory with [evo](https://github.com/MichaelGrupp/evo).
 `--plot` opens a window, which needs Tk (on Arch: `sudo pacman -S tk`). In the
@@ -131,6 +131,10 @@ it. To format all C++ files in the repository run
 ```sh
 git ls-files -- '*.cpp' '*.hpp' '*.h' | xargs uv run clang-format -i
 ```
+
+### Docs check
+`python3 scripts/check_docs.py` checks the Markdown files for line budgets,
+broken links and emoji, and the CI runs it.
 
 ### ClangTidy
 [ClangTidy](https://clang.llvm.org/extra/clang-tidy/) checks the naming style
