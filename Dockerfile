@@ -4,23 +4,16 @@ FROM ubuntu:22.04
 # Set environment variables to avoid interactive prompts during package installation
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Install basic dependencies and Python's pip to install CMake.
+# Install basic dependencies and Python's pip to install uv.
 # build-essential gives gcc 11, which matches conan/profiles/linux.
+# The X11 packages and xkb-data are what Conan's xorg/system and
+# xkeyboard-config/system check for; OpenCV's windows (highgui) need them.
 RUN apt-get update && apt-get install -y \
     build-essential \
     python3-pip \
     sudo \
     pkg-config \
-    libgl1-mesa-dev \
-    libwayland-dev \
-    libxkbcommon-dev \
-    wayland-protocols \
-    libc++-dev \
-    libepoxy-dev \
-    libglew-dev \
-    libegl1-mesa-dev \
-    libva-dev \
-    libvdpau-dev \
+    xkb-data \
     libx11-dev \
     libx11-xcb-dev \
     libfontenc-dev \
@@ -64,10 +57,7 @@ RUN apt-get update && apt-get install -y \
     libxcb-ewmh-dev \
     libxcb-res0-dev \
     libxcb-util-dev \
-    libxcb-util0-dev \
-    libjpeg-dev \
-    libpng-dev \
-    libeigen3-dev
+    libxcb-util0-dev
 
 
 RUN pip3 install uv

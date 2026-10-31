@@ -3,14 +3,18 @@ SLAMBot
 
 A Visual SLAM system implemented in C++ using OpenCV and Eigen.
 
+The plan, decisions and conventions are in [docs/ROADMAP.md](./docs/ROADMAP.md).
+
 ## Clone Project
 ```
-git clone --recurse-submodules git@github.com:MaximilianSalen/SLAMBot.git
+git clone git@github.com:MaximilianSalen/SLAMBot.git
 ```
-If the project is already cloned without the submodules, fetch them with
-```
-git submodule update --init --recursive
-```
+
+## Layout
+- [slambot](./slambot): the library, one CMake target per module
+  (`slambot::core`, ...). Unit tests sit next to the code as `<file>_test.cpp`.
+- [experiments](./experiments): book exercises and package demos.
+- [cmake](./cmake): `slambot_add_module()`, warnings and sanitizers.
 
 ## Build Project
 The project is setup with [uv](https://github.com/astral-sh/uv) for managing
@@ -60,29 +64,34 @@ uv run cmake --preset conan-release
 uv run cmake --build --preset conan-release
 ```
 
-The compiled program can be executed with
-```sh
-./build/Release/SLAMBot/SLAMBotApp
-```
-
 When exiting the docker container, it can be stopped with
 ```sh
 docker container stop slambot-dev-container
 ```
 
 ## Testing
-The project use [Catch2](https://github.com/catchorg/Catch2) for tests. Tests
-are added in their libraries respective CMake file. The tests can be run with
-the following command
+The project uses [Catch2](https://github.com/catchorg/Catch2) for tests. A
+module lists its test files under `TESTS` in `slambot_add_module()` (see
+[slambot/core/CMakeLists.txt](./slambot/core/CMakeLists.txt)). Run the tests
+with
 ```sh
 uv run ctest --preset conan-release
+```
+
+To find memory errors and undefined behavior, build and test with
+AddressSanitizer in `build/asan` (use `tsan` for ThreadSanitizer). It reuses
+the packages from `conan install` above.
+```sh
+uv run cmake --preset asan
+uv run cmake --build --preset asan
+uv run ctest --preset asan
 ```
 
 ## Experiments
 Book exercises and package demos live in [experiments](./experiments). They are
 built by default, but are not part of the library and are not run as tests.
-`demo_opencv` and `demo_pangolin` open a window, so they need a display. To skip
-the experiments, configure with
+`demo_opencv` opens a window, so it needs a display. To skip the experiments,
+configure with
 ```sh
 uv run cmake --preset conan-release -DSLAMBOT_BUILD_EXPERIMENTS=OFF
 ```
@@ -101,7 +110,15 @@ uv run conan lock create . --profile=conan/profiles/linux
 ### ClangFormat
 [ClangFormat](https://clang.llvm.org/docs/ClangFormat.html) is used as a
 formatter for the C++ files, and the [CI](./.github/workflows/ci.yml) checks
-it. To format all `.h` and `.cpp` files in the repository (not `extern`) run
+it. To format all C++ files in the repository run
 ```sh
-git ls-files -- '*.cpp' '*.h' ':!extern/' | xargs uv run clang-format -i
+git ls-files -- '*.cpp' '*.hpp' '*.h' | xargs uv run clang-format -i
+```
+
+### ClangTidy
+[ClangTidy](https://clang.llvm.org/extra/clang-tidy/) checks the naming style
+([ROADMAP D5](./docs/ROADMAP.md#d5-naming-and-style)) and common bugs in
+`slambot/`, and the CI checks it. After a build, run
+```sh
+git ls-files -- 'slambot/*.cpp' | xargs uv run clang-tidy -p build/Release
 ```

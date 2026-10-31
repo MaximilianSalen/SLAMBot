@@ -1,0 +1,42 @@
+{
+  "version": 4,
+  "configurePresets": [
+    {
+      "name": "sanitizer-base",
+      "hidden": true,
+      "description": "Uses the Release packages from conan install, in its own build folder",
+      "generator": "Ninja",
+      "toolchainFile": "${sourceDir}/build/Release/generators/conan_toolchain.cmake",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "SLAMBOT_BUILD_EXPERIMENTS": "OFF"
+      }
+    },
+    {
+      "name": "asan",
+      "displayName": "AddressSanitizer + UndefinedBehaviorSanitizer",
+      "inherits": "sanitizer-base",
+      "binaryDir": "${sourceDir}/build/asan",
+      "cacheVariables": {
+        "SLAMBOT_SANITIZER": "address"
+      }
+    },
+    {
+      "name": "tsan",
+      "displayName": "ThreadSanitizer",
+      "inherits": "sanitizer-base",
+      "binaryDir": "${sourceDir}/build/tsan",
+      "cacheVariables": {
+        "SLAMBOT_SANITIZER": "thread"
+      }
+    }
+  ],
+  "buildPresets": [
+    { "name": "asan", "configurePreset": "asan" },
+    { "name": "tsan", "configurePreset": "tsan" }
+  ],
+  "testPresets": [
+    { "name": "asan", "configurePreset": "asan", "output": { "outputOnFailure": true } },
+    { "name": "tsan", "configurePreset": "tsan", "output": { "outputOnFailure": true } }
+  ]
+}
