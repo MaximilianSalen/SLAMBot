@@ -5,6 +5,14 @@ sophus/1.22.10
 opencv/4.11.0
 xkbcommon/1.6.0
 
+[options]
+# No video decoding needed (datasets are image sequences). ffmpeg also pulls
+# in ~25 extra source builds.
+opencv/*:with_ffmpeg=False
+
 [generators]
 CMakeDeps
 CMakeToolchain
+
+[layout]
+cmake_layout

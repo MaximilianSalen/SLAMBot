@@ -4,12 +4,12 @@ FROM ubuntu:22.04
 # Set environment variables to avoid interactive prompts during package installation
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Install basic dependencies and Python's pip to install CMake
+# Install basic dependencies and Python's pip to install CMake.
+# build-essential gives gcc 11, which matches conan/profiles/linux.
 RUN apt-get update && apt-get install -y \
     build-essential \
     python3-pip \
     sudo \
-    g++12 \
     pkg-config \
     libgl1-mesa-dev \
     libwayland-dev \
@@ -59,7 +59,6 @@ RUN apt-get update && apt-get install -y \
     uuid-dev \
     libxcb-cursor-dev \
     libxcb-dri2-0-dev \
-    libxcb-dri3-dev \
     libxcb-present-dev \
     libxcb-composite0-dev \
     libxcb-ewmh-dev \
